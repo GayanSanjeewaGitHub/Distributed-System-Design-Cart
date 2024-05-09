@@ -1,0 +1,15 @@
+on server
+
+ sudo java -jar target/communication-server-1.0-SNAPSHOT-jar-with-dependencies.jar  11436
+sudo java -jar target/communication-server-1.0-SNAPSHOT-jar-with-dependencies.jar  11437
+
+
+on client
+
+  sudo java -jar target/client-1.0-SNAPSHOT-jar-with-dependencies.jar localhost 11436 s
+ sudo java -jar target/client-1.0-SNAPSHOT-jar-with-dependencies.jar localhost 11436 c
+
+
+
+ sudo java -jar target/client-1.0-SNAPSHOT-jar-with-dependencies.jar localhost 11437 s
+sudo java -jar target/client-1.0-SNAPSHOT-jar-with-dependencies.jar localhost 11437 c

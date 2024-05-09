@@ -1,0 +1,45 @@
+# Maven specific
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE-specific files
+*.iml
+*.ipr
+*.iws
+.idea/
+*.class
+*.war
+*.ear
+
+# Compiled bytecode
+*.class
+
+# Logs
+*.log
+
+# Maven generated files
+mvnw
+mvnw.cmd
+.mvn/
+
+# Eclipse specific
+.classpath
+.project
+.settings/
+
+# Intellij specific
+*.iml
+*.ipr
+*.iws
+.idea/
+*.class
+*.war
+*.ear
+.idea/
+
+# NetBeans specific
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
