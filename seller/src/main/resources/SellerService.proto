@@ -1,0 +1,63 @@
+syntax = "proto3"; 
+option java_multiple_files = true; 
+package ds.tutorial.communication.grpc.generated; 
+
+message LoggingRequest {
+  string accountId = 1;
+  string password = 2;
+}
+
+message LoggingResponse {
+  bool status = 1;
+}
+
+message LogoutRequest {
+  string accountId = 1;
+}
+
+message LogoutResponse {
+  bool status = 1;
+}
+
+service LoginService{
+  rpc login(LoggingRequest) returns(LoggingResponse);
+
+}
+
+service LogoutService{
+  rpc logout(LogoutRequest) returns(LogoutResponse);
+
+}
+
+
+
+message AddItemRequest {
+   string sellerId =1;
+   string ItemId = 2;
+   double amount = 3;
+   bool SellOrBuy =4 ;
+   bool Status = 5;
+   bool isSentByPrimary = 6;
+}
+
+message AddItemResponse {
+   bool status = 1;
+}
+
+service AddItemService {
+   rpc addItem(AddItemRequest) returns(AddItemResponse);
+}
+
+message DeleteItemRequest {
+  string sellerId = 1;
+  string ItemId = 2;
+  bool isSentByPrimary = 3;
+}
+
+message DeleteItemResponse {
+  bool status = 1;
+}
+
+service DeleteItemService {
+  rpc deleteItem(DeleteItemRequest) returns (DeleteItemResponse);
+}
