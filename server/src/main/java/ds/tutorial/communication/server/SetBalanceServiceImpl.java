@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SetBalanceServiceImpl extends SetBalanceServiceGrpc.SetBalanceServiceImplBase implements DistributedTxListener {
-    private ManagedChannel channel = null;
+   private ManagedChannel channel = null;
    SetBalanceServiceGrpc.SetBalanceServiceBlockingStub clientStub = null;
    private BankServer server;
    private Pair<String, Double> tempDataHolder;

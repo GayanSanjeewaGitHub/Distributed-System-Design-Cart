@@ -30,7 +30,7 @@ public class BankServer {
         DistributedTx.setZooKeeperURL("localhost:2181");
         int serverPort;
         if (args.length != 1) {
-            System.out.println("Usage BankServer <port>");
+            System.out.println("Usage Main Server <port>");
             System.exit(1);
         }
         serverPort = Integer.parseInt(args[0].trim());
@@ -54,7 +54,6 @@ public class BankServer {
                 .build();
         server.start();
         System.out.println("BankServer Started and ready to accept requests on port " + serverPort);
-     
         tryToBeLeader();
         server.awaitTermination();
      }

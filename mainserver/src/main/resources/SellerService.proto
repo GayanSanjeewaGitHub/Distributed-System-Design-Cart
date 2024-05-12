@@ -5,7 +5,12 @@ package ds.tutorial.communication.grpc.generated;
 message LoggingRequest {
   string accountId = 1;
   string password = 2;
+  bool isSentByPrimary = 3;
 }
+
+
+
+
 
 message LoggingResponse {
   bool status = 1;
@@ -29,13 +34,11 @@ service LogoutService{
 
 }
 
-
-
 message AddItemRequest {
    string sellerId =1;
    string ItemId = 2;
    int64 amount = 3;
-   bool SellOrBuy =4 ;
+   string SellOrBuy =4 ;
    bool Status = 5;
    bool isSentByPrimary = 6;
 }

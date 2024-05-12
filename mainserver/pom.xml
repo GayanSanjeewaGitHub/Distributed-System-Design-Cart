@@ -4,18 +4,18 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ds.tutorial.communication</groupId>
-  <artifactId>seller</artifactId>
-  <version>1.0-SNAPSHOT</version>
+   <groupId>ds.we23.lab_5</groupId>
+    <artifactId>main-communication-server</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <name>client</name>
+  <name>server</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -45,12 +45,16 @@
         <artifactId>grpc-stub</artifactId>
         <version>1.36.0</version>
     </dependency>
-
     <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.28</version>  
+      <groupId>ds.we23.lab_5</groupId>
+    <artifactId>synchronization-distiruted-lock</artifactId>
+    <version>3.0.0</version>
     </dependency>
+    <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-base</artifactId>
+    <version>17.0.11</version>
+</dependency>
   </dependencies>
 
   <build>
@@ -59,7 +63,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-<!--            <release>11</release>-->
+          <release>11</release>
         </configuration>
       </plugin>
       <plugin>
@@ -67,12 +71,12 @@
         <artifactId>protobuf-maven-plugin</artifactId>
         <version>0.6.1</version>
         <configuration>
-         <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
-          <pluginId>grpc-java</pluginId>
-          <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.36.0:exe:${os.detected.classifier}</pluginArtifact>
-          <protoSourceRoot>src/main/resources</protoSourceRoot>
-        </configuration>
-        <executions>
+            <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.36.0:exe:${os.detected.classifier}</pluginArtifact>
+                    <protoSourceRoot>src/main/resources</protoSourceRoot>
+          </configuration>
+          <executions>
               <execution>
                   <goals>
                       <goal>compile</goal>
@@ -87,12 +91,12 @@
         <version>3.1.1</version>
         <configuration>
             <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
               </descriptorRefs>
               <archive>
-                  <manifest>              
-                    <mainClass>ds.tutorial.communication.client.CheckBalanceServiceClient</mainClass>
-                  </manifest>
+                <manifest>              
+                  <mainClass>ds.tutorial.communication.server.MainServer</mainClass>
+                </manifest>
               </archive>
           </configuration>
           <executions>
@@ -105,14 +109,14 @@
                 </execution>
           </executions>
       </plugin>
+
     </plugins>
     <extensions>
       <extension>
-          <groupId>kr.motd.maven</groupId>
-          <artifactId>os-maven-plugin</artifactId>
-          <version>1.6.2</version>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.6.2</version>
       </extension>
     </extensions>
-
   </build>
 </project>
