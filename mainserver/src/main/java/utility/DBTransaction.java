@@ -404,17 +404,25 @@ public class DBTransaction {
 
             // Check if inventory_id exists
             String itemId = map.get("itemid");
-            String checkInventoryQuery = "SELECT id FROM inventory WHERE itemid = ?";
+            String checkInventoryQuery = "SELECT id, reserved FROM inventory WHERE itemid = ?";
             preparedStatement = connection.prepareStatement(checkInventoryQuery);
             preparedStatement.setString(1, itemId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             int inventoryId = -1; // Initialize with a negative value
+            boolean isReserved = false;
             if (resultSet.next()) {
                 inventoryId = resultSet.getInt("id");
+                isReserved = resultSet.getInt("reserved") == 1;
             } else {
                 // If inventory_id doesn't exist, handle accordingly
                 System.out.println("Inventory item with id " + itemId + " does not exist.");
+                return;
+            }
+
+            if (isReserved) {
+                // If the item is already reserved, do not process further
+                System.out.println("Inventory item with id " + itemId + " is already reserved.");
                 return;
             }
 
@@ -423,7 +431,6 @@ public class DBTransaction {
             preparedStatement = connection.prepareStatement(lockInventoryQuery);
             preparedStatement.setInt(1, inventoryId);
             preparedStatement.executeQuery(); // Execute query just to lock the row
-
 
             // Lock the order table
             String lockOrderTableQuery = "LOCK TABLES `order` WRITE";
@@ -435,7 +442,6 @@ public class DBTransaction {
             preparedStatement = connection.prepareStatement(updateInventoryQuery);
             preparedStatement.setInt(1, inventoryId);
             preparedStatement.executeUpdate();
-
 
             // Insert order record
             String insertOrderQuery = "INSERT INTO `order` (inventory_id, customerid, date, paymentmethod) VALUES (?, ?, NOW(), ?)";
