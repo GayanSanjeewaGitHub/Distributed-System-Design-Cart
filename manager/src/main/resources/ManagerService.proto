@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package ds.tutorial.communication.grpc.generated;
+
+message FactoryGoodsRequest {
+  string managerId = 1;
+  string goodsId = 2;
+  bool isSentByPrimary = 4;
+}
+
+message FactoryGoodsResponse {
+  bool status = 1;
+}
+
+service FactoryGoodsService{
+  rpc orderGoods(FactoryGoodsRequest) returns(FactoryGoodsResponse);
+
+}
+
+

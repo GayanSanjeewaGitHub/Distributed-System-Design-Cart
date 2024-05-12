@@ -1,0 +1,36 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package ds.tutorial.communication.grpc.generated;
+
+message ReserveRequest {
+  string customerId = 1;
+  string itemId = 2;
+  string paymentMethod = 3;
+  bool isSentByPrimary = 4;
+}
+
+message ReserveResponse {
+  bool status = 1;
+}
+
+message InventryAddRequest {
+  string clarkId = 1;
+  string itemId = 2;
+  bool  reserved = 3;
+  bool isSentByPrimary = 4;
+
+}
+
+message InventryAddResponse {
+  bool status = 1;
+}
+
+service InventryAddService{
+  rpc addInventry(InventryAddRequest) returns(InventryAddResponse);
+
+}
+
+service ReservationService{
+  rpc reserve(ReserveRequest) returns(ReserveResponse);
+
+}

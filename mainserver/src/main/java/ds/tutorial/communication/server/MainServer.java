@@ -109,6 +109,10 @@ public class MainServer {
         DBTransaction.addOrUpdateItems(accountId, map);
     }
 
+    public void setDeleteItemStatus(String accountId, HashMap<String, String> map) {
+        DBTransaction.DeleteItems(accountId, map);
+    }
+
     //
     class LeaderCampaignThread implements Runnable {
         private byte[] currentLeaderData = null;

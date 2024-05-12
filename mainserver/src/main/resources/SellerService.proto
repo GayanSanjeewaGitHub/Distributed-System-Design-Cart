@@ -54,7 +54,7 @@ service AddItemService {
 message DeleteItemRequest {
   string sellerId = 1;
   string ItemId = 2;
-  bool Status = 3;
+  bool status = 3;
   bool isSentByPrimary = 4;
 }
 

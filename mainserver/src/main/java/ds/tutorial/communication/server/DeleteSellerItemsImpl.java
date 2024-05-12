@@ -15,70 +15,68 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class SetSellerItemsImpl extends AddItemServiceGrpc.AddItemServiceImplBase implements DistributedTxListener {
+public class DeleteSellerItemsImpl extends DeleteItemServiceGrpc.DeleteItemServiceImplBase implements DistributedTxListener {
     private final MainServer mainServer;
-    AddItemServiceGrpc.AddItemServiceBlockingStub addItemServiceBlockingStub = null;
 
+    DeleteItemServiceGrpc.DeleteItemServiceBlockingStub deleteItemServiceBlockingStub = null;
     private ManagedChannel channel = null;
     private volatile Pair<String, HashMap<String, String>> tempDataHolderForItem;
     private boolean transactionStatus = false;
 
-    public SetSellerItemsImpl(MainServer mainServer) {
+    public DeleteSellerItemsImpl(MainServer mainServer) {
         this.mainServer = mainServer;
     }
 
 
     @Override
-    public void addItem(AddItemRequest request, io.grpc.stub.StreamObserver<AddItemResponse> responseObserver) {
-
+    public void deleteItem(DeleteItemRequest request, io.grpc.stub.StreamObserver<DeleteItemResponse> responseObserver) {
 
         String sellerId = request.getSellerId();
         String itemId = request.getItemId();
-        int amount = (int) request.getAmount();
-        String sellorbuy = request.getSellOrBuy();
+        String status = Boolean.toString(request.getStatus());
 
-        HashMap<String, String> itemsdetails = new HashMap<String, String>();
-        itemsdetails.put("sellerId", sellerId);
-        itemsdetails.put("amount", itemId);
-        itemsdetails.put("sellorbuy", sellorbuy);
-        itemsdetails.put("sellerId", Integer.toString(amount));
+        HashMap<String, String> itemsdetailsfordelete = new HashMap<String, String>();
+        itemsdetailsfordelete.put("sellerId", sellerId);
+        itemsdetailsfordelete.put("amount", itemId);
+        itemsdetailsfordelete.put("status", status);
 
 
         if (mainServer.isLeader()) {
             // Act as primary
             try {
-                System.out.println("adding items as  Primary");
-                startDistributedTx(sellerId, itemsdetails);
-                updateSecondaryServers(sellerId, itemsdetails);
-                System.out.println("going to perform");
+                System.out.println("deleting  items as  Primary");
+                startDistributedTx(sellerId, itemsdetailsfordelete);
+                updateSecondaryServers(sellerId, itemsdetailsfordelete);
+                System.out.println("going to perform deleting");
 
                 ((DistributedTxCoordinator) mainServer.getTransaction()).perform();
                 //    } else {
                 //    ((DistributedTxCoordinator) server.getTransaction()).sendGlobalAbort();
                 //    }
             } catch (Exception e) {
-                System.out.println("Error while updating the Items" + e.getMessage());
+                System.out.println("Error while deleting the Items" + e.getMessage());
                 e.printStackTrace();
             }
         } else {
 //             Act As Secondary
             if (request.getIsSentByPrimary()) {
-                System.out.println("confirming  loggin details  on secondary, on Primary's command");
-                startDistributedTx(sellerId, itemsdetails);
-                if (amount >= 0) {
+                System.out.println("confirming  deleting details  on secondary, on Primary's command");
+                startDistributedTx(sellerId, itemsdetailsfordelete);
+                if (true) {//Boolean.getBoolean(status)
                     ((DistributedTxParticipant) mainServer.getTransaction()).voteCommit();
                 } else {
                     ((DistributedTxParticipant) mainServer.getTransaction()).voteAbort();
                 }
             } else {
-                AddItemResponse response = callPrimary(sellerId, itemsdetails);
+
+                DeleteItemResponse response = callPrimaryForDeletion(sellerId, itemsdetailsfordelete);
                 if (response.getStatus()) {
                     transactionStatus = true;
                 }
             }
         }
 
-        AddItemResponse responseitem = AddItemResponse.newBuilder().setStatus(transactionStatus).build();
+        DeleteItemResponse responseitem = DeleteItemResponse.newBuilder().setStatus(transactionStatus).build();
 
 
         responseObserver.onNext(responseitem);
@@ -86,12 +84,14 @@ public class SetSellerItemsImpl extends AddItemServiceGrpc.AddItemServiceImplBas
     }
 
 
-    private AddItemResponse callPrimary(String accountId, HashMap<String, String> map) {
+
+
+    private DeleteItemResponse callPrimaryForDeletion(String accountId, HashMap<String, String> map) {
         System.out.println("Calling Primary server ");
         String[] currentLeaderData = mainServer.getCurrentLeaderData();
         String IPAddress = currentLeaderData[0];
         int port = Integer.parseInt(currentLeaderData[1]);
-        return callServer(accountId, map, false, IPAddress, port);
+        return callServerForDelete(accountId, map, false, IPAddress, port);
     }
 
 
@@ -105,7 +105,7 @@ public class SetSellerItemsImpl extends AddItemServiceGrpc.AddItemServiceImplBas
         if (tempDataHolderForItem != null) {
             String accountId = tempDataHolderForItem.getKey();
             HashMap<String, String> value = tempDataHolderForItem.getValue();
-            mainServer.setItemStatus(accountId, value);
+            mainServer.setDeleteItemStatus(accountId, value);
             System.out.println("Account " + accountId + " updated Item status  ");
             tempDataHolderForItem = null;
         }
@@ -134,22 +134,23 @@ public class SetSellerItemsImpl extends AddItemServiceGrpc.AddItemServiceImplBas
         for (String[] data : othersData) {
             String IPAddress = data[0];
             int port = Integer.parseInt(data[1]);
-            callServer(accountId, map, true, IPAddress, port);
+            callServerForDelete(accountId, map, true, IPAddress, port);
         }
     }
 
-    private AddItemResponse callServer(String accountId, HashMap<String, String> map, boolean isSentByPrimary, String IPAddress, int port) {
+
+
+    private DeleteItemResponse callServerForDelete(String accountId, HashMap<String, String> map, boolean isSentByPrimary, String IPAddress, int port) {
         System.out.println("Call Server " + IPAddress + ":" + port);
         channel = ManagedChannelBuilder.forAddress(IPAddress, port).usePlaintext().build();
 
+        deleteItemServiceBlockingStub = DeleteItemServiceGrpc.newBlockingStub(channel);
 
-        addItemServiceBlockingStub = AddItemServiceGrpc.newBlockingStub(channel);
-
-        AddItemRequest addItemRequest = AddItemRequest.newBuilder().setSellerId(accountId).setItemId(map.get("itemId ")).setAmount(Long.parseLong(map.get("amount"))).setSellOrBuy(map.get("sellorbuy")).build();
-
-        AddItemResponse addItemResponse = addItemServiceBlockingStub.addItem(addItemRequest);
-        return addItemResponse;
-
+        DeleteItemRequest deleteItemRequest = DeleteItemRequest.newBuilder().setSellerId(accountId).setItemId(map.get("itemId"))
+//                .setStatus(map.get("status"))
+                .build();
+        DeleteItemResponse deleteItemResponse = deleteItemServiceBlockingStub.deleteItem(deleteItemRequest);
+        return deleteItemResponse;
     }
 
 

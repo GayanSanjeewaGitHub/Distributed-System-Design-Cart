@@ -14,7 +14,7 @@ import ds.tutorial.communication.grpc.generated.*;
 
 import java.sql.Statement;
 
-class SellerServiceClient {
+class CustomerServiceClient {
 
     LoginServiceGrpc.LoginServiceBlockingStub sellerLoginStub = null;
     LogoutServiceGrpc.LogoutServiceBlockingStub sellerLogoutStub = null;
@@ -24,7 +24,7 @@ class SellerServiceClient {
     int port = -1;
     String mode;
     private ManagedChannel channel = null;
-    public SellerServiceClient(String host, int port, String mode) {
+    public CustomerServiceClient(String host, int port, String mode) {
         this.host = host;
         this.port = port;
         this.mode = mode;
@@ -174,7 +174,7 @@ class SellerServiceClient {
         int port = -1;
         String mode;
         if (args.length != 3) {
-            System.out.println("Usage CheckBalanceServiceClient <host> <port>");
+            System.out.println("Usage customer ServiceClient <host> <port>");
             System.exit(1);
         }
         host = args[0];

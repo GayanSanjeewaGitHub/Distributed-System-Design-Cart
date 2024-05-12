@@ -224,4 +224,79 @@ public class DBTransaction {
             }
         }
     }
+
+    public static void DeleteItems(String accountId, HashMap<String, String> map) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Get connection from singleton class
+            connection = MySQLConnectionSingleton.getInstance();
+
+            // Set auto-commit to false to start a transaction
+            connection.setAutoCommit(false);
+
+            // Check if seller account exists
+            String sqlCheckSeller = "SELECT id FROM seller WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sqlCheckSeller);
+            preparedStatement.setString(1, accountId);
+            resultSet = preparedStatement.executeQuery();
+            boolean sellerExists = resultSet.next();
+
+            if (sellerExists) {
+                // Seller account exists, check if item exists for the seller
+                String itemId = map.get("itemId");
+                String sqlCheckItem = "SELECT id FROM selleritems WHERE id = ? AND seller_id = ?";
+                preparedStatement = connection.prepareStatement(sqlCheckItem);
+                preparedStatement.setString(1, itemId);
+                preparedStatement.setString(2, accountId);
+                resultSet = preparedStatement.executeQuery();
+                boolean itemExists = resultSet.next();
+
+                if (itemExists) {
+                    // Item exists, update the status to 0
+                    String sqlUpdateStatus = "UPDATE selleritems SET status = 0 WHERE id = ?";
+                    preparedStatement = connection.prepareStatement(sqlUpdateStatus);
+                    preparedStatement.setString(1, itemId);
+                    preparedStatement.executeUpdate();
+                    System.out.println("Item status updated to 0 successfully.");
+                } else {
+                    // Item does not exist
+                    System.out.println("Item with ID " + itemId + " does not exist.");
+                }
+            } else {
+                // Seller account does not exist
+                System.out.println("Seller account with ID " + accountId + " does not exist.");
+            }
+
+            // Commit the transaction
+            connection.commit();
+        } catch (SQLException e) {
+            // Rollback the transaction in case of exception
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            // Close resources and set auto-commit back to true
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
