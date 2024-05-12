@@ -1,7 +1,9 @@
 package utility;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DBTransaction {
     public static void sellerLogIn(String accountId, String password) {
@@ -479,5 +481,58 @@ public class DBTransaction {
                 }
             }
         }
+    }
+
+    public static List<String> AllAvailableItems() {
+        List<String> availableItems = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            connection = MySQLConnectionSingleton.getInstance();
+
+            // Prepare and execute query to retrieve available items
+            String query = "SELECT itemid FROM inventory WHERE reserved = 0";
+            preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+
+            // Iterate through the result set and add item IDs to the list
+            while (resultSet.next()) {
+                String itemId = resultSet.getString("itemid");
+                availableItems.add(itemId);
+            }
+
+        } catch (SQLException e) {
+            // Handle any SQL errors
+            e.printStackTrace();
+        } finally {
+            // Close ResultSet, PreparedStatement, and Connection
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Return the list of available item IDs
+        return availableItems;
     }
 }
