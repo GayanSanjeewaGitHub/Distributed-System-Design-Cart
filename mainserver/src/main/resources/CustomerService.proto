@@ -34,3 +34,20 @@ service ReservationService{
   rpc reserve(ReserveRequest) returns(ReserveResponse);
 
 }
+
+
+message AllAvailableItemResponse {
+  repeated string items = 1;
+
+}
+
+
+service AllAvailableItemService {
+  rpc getAllAvailableItems(Empty) returns (AllAvailableItemResponse);
+}
+
+message Empty {
+  bool isSentByPrimary = 1;
+}
+
+
