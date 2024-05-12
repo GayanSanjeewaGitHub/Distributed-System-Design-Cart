@@ -27,94 +27,6 @@ class ClarkServiceClient {
         this.mode = mode;
     }
 
-    private static void loggingProcess(String userId, String password) {
-        try {
-
-            Connection con = DatabaseManager.getInstance().getConnection();
-            Statement stmt = con.createStatement();
-
-
-            String sqlCheckUser = "SELECT id FROM seller WHERE id = '" + userId + "'";
-            boolean userExists = stmt.executeQuery(sqlCheckUser).next();
-
-            if (userExists) {
-                // User exists, update password and status
-                String sqlUpdate = "UPDATE seller SET password = '" + password + "', status = 1 WHERE id = '" + userId + "'";
-                stmt.executeUpdate(sqlUpdate);
-                System.out.println("User updated successfully.");
-
-            } else {
-                // User does not exist, create new user
-                String sqlInsert = "INSERT INTO seller (id, password, status) VALUES ('" + userId + "', '" + password + "', 1)";
-                stmt.executeUpdate(sqlInsert);
-                System.out.println("User created successfully.");
-            }
-
-            stmt.close();
-            con.close();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private static void logoutProcess(String userId) {
-        try {
-            Connection con = DatabaseManager.getInstance().getConnection();
-            Statement stmt = con.createStatement();
-
-            String sqlCheckUser = "SELECT id FROM seller WHERE id = '" + userId + "'";
-            boolean userExists = stmt.executeQuery(sqlCheckUser).next();
-
-            if (userExists) {
-                // User exists, update status to 0 (logged out)
-                String sqlUpdate = "UPDATE seller SET status = 0 WHERE id = '" + userId + "'";
-                stmt.executeUpdate(sqlUpdate);
-                System.out.println("User logged out successfully.");
-            } else {
-
-                System.out.println("User does not exist.");
-            }
-
-            stmt.close();
-            con.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static boolean isloggedin(String userId) {
-        try {
-            Connection con = DatabaseManager.getInstance().getConnection();
-            Statement stmt = con.createStatement();
-
-            String sqlCheckUser = "SELECT id, status FROM seller WHERE id = '" + userId + "'";
-            ResultSet rs = stmt.executeQuery(sqlCheckUser);
-
-            if (rs.next()) {
-                int status = rs.getInt("status");
-                if (status == 1) {
-                    System.out.println("User session is available .");
-                    return true;
-                } else {
-                    System.out.println("User is not logged in.");
-                    return false;
-                }
-            } else {
-                System.out.println("User does not exist.");
-                return false;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
     private static void startSellingProcess(String sellerId, String itemId, String sellOrBuy, int amount) {
         try {
             Connection con = DatabaseManager.getInstance().getConnection();
@@ -149,23 +61,7 @@ class ClarkServiceClient {
 
 
     public static void main(String[] args) throws InterruptedException {
-        // if (args[0].equals("login")) {
-        //     loggingProcess(args[1], args[2]);
-        // } else {
-        //     if (args[0].equals("logout")) {
-        //         logoutProcess(args[1]);
-        //     } else {
-        //         boolean isloggedin = isloggedin(args[0]);
-        //         if (args.length == 4) {
-        //             startSellingProcess(args[0], args[1], args[2], Integer.parseInt(args[3]));
-        //         } else {
-        //             System.out.println("not enough data to sell ot buy items");
-        //         }
 
-        //     }
-
-
-        // }
 
         String host = null;
         int port = -1;
