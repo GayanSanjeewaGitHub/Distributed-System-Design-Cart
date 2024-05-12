@@ -31,38 +31,6 @@ class SellerServiceClient {
     }
 
 
-    private static void startSellingProcess(String sellerId, String itemId, String sellOrBuy, int amount) {
-        try {
-            Connection con = DatabaseManager.getInstance().getConnection();
-            Statement stmt = con.createStatement();
-
-            // Check if the record already exists
-            String sqlCheckRecord = "SELECT id FROM selleritems WHERE seller_id = '" + sellerId + "' AND itemname = '" + itemId + "'";
-            boolean recordExists = stmt.executeQuery(sqlCheckRecord).next();
-
-            if (recordExists) {
-                // Record exists, update it
-                String sqlUpdateRecord = "UPDATE selleritems SET amount = amount + " + amount + ", cellorrent = '" + sellOrBuy + "' WHERE seller_id = '" + sellerId + "' AND itemname = '" + itemId + "' AND amount + " + amount + " >= 0";
-                int rowsUpdated = stmt.executeUpdate(sqlUpdateRecord);
-                if (rowsUpdated > 0) {
-                    System.out.println("Record updated successfully.");
-                } else {
-                    System.out.println("Failed to update record. Minus value not allowed.");
-                }
-            } else {
-                // Record does not exist, insert a new one
-                String sqlInsertRecord = "INSERT INTO selleritems (itemname, seller_id, cellorrent, amount) VALUES ('" + itemId + "', '" + sellerId + "', '" + sellOrBuy + "', " + amount + ")";
-                stmt.executeUpdate(sqlInsertRecord);
-                System.out.println("New record inserted successfully.");
-            }
-
-            stmt.close();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public static void main(String[] args) throws InterruptedException {
 

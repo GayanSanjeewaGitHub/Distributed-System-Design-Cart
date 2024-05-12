@@ -91,7 +91,7 @@
               </descriptorRefs>
               <archive>
                   <manifest>              
-                    <mainClass>ds.tutorial.communication.client.CheckBalanceServiceClient</mainClass>
+                    <mainClass>ds.tutorial.communication.seller.SellerServiceClient</mainClass>
                   </manifest>
               </archive>
           </configuration>
