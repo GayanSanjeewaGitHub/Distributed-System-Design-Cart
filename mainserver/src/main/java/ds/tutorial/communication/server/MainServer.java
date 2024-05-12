@@ -109,6 +109,22 @@ public class MainServer {
         DBTransaction.addOrUpdateItems(accountId, map);
     }
 
+    public void setInventryItemStatus(String accountId, String itemid) {
+        DBTransaction.addInventoryItems(accountId, itemid);
+    }
+
+    public void setOrderGoodsItemStatus(String accountId, String goodsid) {
+        DBTransaction.addOrderGoodsItems(accountId, goodsid);
+    }
+
+    public void setCustomerOrderItemStatus(String accountId, HashMap<String, String> map) {
+        DBTransaction.addCustomerOrderItems(accountId, map);
+    }
+
+    public void setManagerOrderItemStatus(String accountId, String ordergoods) {
+        DBTransaction.addOrderGoodsItems(accountId, ordergoods);
+    }
+
     public void setDeleteItemStatus(String accountId, HashMap<String, String> map) {
         DBTransaction.DeleteItems(accountId, map);
     }
